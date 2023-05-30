@@ -26,6 +26,7 @@ function Form({ categories, getformData }: Props) {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<FormData>({ resolver: zodResolver(schema) });
 
   const onSubmit = (data: FieldValues) => {
@@ -35,17 +36,11 @@ function Form({ categories, getformData }: Props) {
       category: data.category,
     };
     getformData(obj);
+    reset();
   };
 
   return (
-    <div
-      style={{
-        width: "60vh",
-        minWidth: "300px",
-        margin: "auto",
-        textAlign: "center",
-      }}
-    >
+    <div>
       <h3>Create new list Item</h3>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="mb-3">
