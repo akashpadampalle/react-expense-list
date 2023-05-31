@@ -1,37 +1,40 @@
 import "bootstrap/dist/css/bootstrap.css";
-import Form from "./components/Form";
 import { useState } from "react";
 import ExpenseList from "./components/ExpenseList";
+import ExpenseForm from "./components/ExpenseForm";
+import ExpenseFilter from "./components/ExpenseFilter";
 
 function App() {
-  const categories = ["all", "grocery", "meal", "entertainment"];
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [expenses, setExpenses] = useState<
+    Array<{ id: number; description: string; amount: number; category: string }>
+  >([]);
 
-  interface listItem {
-    description: string;
-    amount: number;
-    category: number;
-  }
-
-  const handleFormData = (data: listItem) => {
-    setExpenseList([...expensList, data]);
-  };
-
-  const [expensList, setExpenseList] = useState<listItem[]>([]);
-  const onDeleteItem = (index: number) => {
-    const newExpenseList = expensList.filter((item, i) => index != i);
-    setExpenseList(newExpenseList);
-  };
+  const visibleExpenses = selectedCategory
+    ? expenses.filter((e) => e.category === selectedCategory)
+    : expenses;
 
   return (
-    <>
-      <Form categories={categories} getformData={handleFormData} />
-      <hr />
-      <ExpenseList
-        expenseList={expensList}
-        onDeleteItem={onDeleteItem}
-        categories={categories}
-      />
-    </>
+    <div>
+      <div className="mb-5">
+        <ExpenseForm
+          onSubmit={(expense) =>
+            setExpenses([...expenses, { ...expense, id: expenses.length + 1 }])
+          }
+        />
+      </div>
+      <div className="mb-3">
+        <ExpenseFilter
+          onSelectCategory={(category) => setSelectedCategory(category)}
+        />
+      </div>
+      <div className="mb-3">
+        <ExpenseList
+          expenses={visibleExpenses}
+          onDelete={(id) => setExpenses(expenses.filter((e) => e.id != id))}
+        />
+      </div>
+    </div>
   );
 }
 
